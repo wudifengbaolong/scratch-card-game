@@ -220,28 +220,39 @@
         scratchCtx.restore();
     }
 
-    function newGame() {
-        let idx;
-        if (Math.random() < HIGH_FREQ_WEIGHT) {
-            idx = HIGH_FREQ_INDEX;
-        } else {
-            const others = BACKGROUNDS.filter((_, i) => i !== HIGH_FREQ_INDEX);
-            idx = BACKGROUNDS.indexOf(others[Math.floor(Math.random() * others.length)]);
+    // 预加载所有图片，记录哪些能成功加载
+    const loadedSet = new Set();
+
+    function preloadImages() {
+        BACKGROUNDS.forEach((src, i) => {
+            const img = new Image();
+            img.onload = () => loadedSet.add(i);
+            img.onerror = () => console.error('预加载失败:', src);
+            img.src = encodeURI(src);
+        });
+    }
+
+    function pickBackground() {
+        // 严格 60% 高频图，40% 其他图
+        const wantHigh = Math.random() < HIGH_FREQ_WEIGHT;
+        if (wantHigh && loadedSet.has(HIGH_FREQ_INDEX)) {
+            return HIGH_FREQ_INDEX;
         }
-        
-        // 使用 encodeURI 处理特殊字符
-        const imgPath = encodeURI(BACKGROUNDS[idx]);
-        cardArt.src = imgPath;
-        
+        // 从其他已加载的图片中随机选
+        const others = [...loadedSet].filter(i => i !== HIGH_FREQ_INDEX);
+        if (others.length > 0) {
+            return others[Math.floor(Math.random() * others.length)];
+        }
+        // 兜底：如果其他图都没加载成功，用高频图
+        if (loadedSet.has(HIGH_FREQ_INDEX)) return HIGH_FREQ_INDEX;
+        // 都没有加载成功，用原始索引
+        return wantHigh ? HIGH_FREQ_INDEX : 0;
+    }
+
+    function newGame() {
+        const idx = pickBackground();
+        cardArt.src = encodeURI(BACKGROUNDS[idx]);
         cardArt.onload = () => drawAll();
-        cardArt.onerror = () => {
-            console.error('图片加载失败:', BACKGROUNDS[idx]);
-            // 加载失败时重试一次，使用不同的图片
-            setTimeout(() => {
-                const retryIdx = (idx + 1) % BACKGROUNDS.length;
-                cardArt.src = encodeURI(BACKGROUNDS[retryIdx]);
-            }, 100);
-        };
     }
 
     function checkScratchProgress() {
@@ -306,8 +317,10 @@
     }
 
     function init() {
+        preloadImages();
         bindEvents();
-        newGame();
+        // 等预加载完成后再开始第一局，确保概率正确
+        setTimeout(newGame, 500);
     }
 
     if (document.readyState === 'loading') {
