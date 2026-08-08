@@ -1,0 +1,102 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    color-scheme: light;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #130a24;
+    font-family: Arial, sans-serif;
+    overflow-y: auto;
+}
+
+.game-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 12px;
+    gap: 16px;
+}
+
+.btn-new {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+    border: 3px solid #fff;
+    border-radius: 12px;
+    padding: 12px 32px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #d4567a, 0 8px 16px rgba(0, 0, 0, 0.3);
+    transition: all 0.1s;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+    letter-spacing: 2px;
+}
+
+.btn-new:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #d4567a, 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-new:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #d4567a, 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.card-stage {
+    position: relative;
+    width: min(92vw, 760px);
+    aspect-ratio: 1680 / 2240;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0 24px 44px rgba(20, 6, 32, 0.52));
+}
+
+.card-stage canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.card-art {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+#scratchCanvas {
+    z-index: 2;
+    cursor: pointer;
+    touch-action: none;
+    user-select: none;
+}
+
+@media (max-width: 480px) {
+    .game-wrapper {
+        padding: 8px;
+    }
+
+    .card-stage {
+        width: min(96vw, 640px);
+    }
+}

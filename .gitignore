@@ -1,0 +1,22 @@
+# Python scripts
+*.py
+
+# PowerShell scripts
+*.ps1
+
+# Calibration tools
+calibrate.html
+calibrate2.html
+analyze_grid.html
+
+# Trae specs
+.trae/
+
+# OS files
+.DS_Store
+desktop.ini
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
