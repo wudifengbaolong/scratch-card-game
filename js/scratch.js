@@ -228,8 +228,20 @@
             const others = BACKGROUNDS.filter((_, i) => i !== HIGH_FREQ_INDEX);
             idx = BACKGROUNDS.indexOf(others[Math.floor(Math.random() * others.length)]);
         }
-        cardArt.src = BACKGROUNDS[idx];
+        
+        // 使用 encodeURI 处理特殊字符
+        const imgPath = encodeURI(BACKGROUNDS[idx]);
+        cardArt.src = imgPath;
+        
         cardArt.onload = () => drawAll();
+        cardArt.onerror = () => {
+            console.error('图片加载失败:', BACKGROUNDS[idx]);
+            // 加载失败时重试一次，使用不同的图片
+            setTimeout(() => {
+                const retryIdx = (idx + 1) % BACKGROUNDS.length;
+                cardArt.src = encodeURI(BACKGROUNDS[retryIdx]);
+            }, 100);
+        };
     }
 
     function checkScratchProgress() {
